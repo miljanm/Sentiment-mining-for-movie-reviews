@@ -54,12 +54,14 @@ print 'Vectorizing sentences'
 start_time = time.time()
 cachedStopWords = stopwords.words("english")
 
+text = [word for word in text.split() if word not in stopwords.words("english")]
+
 with open('../transformedData.csv', 'wb') as csvout:
     my_writer = writer(csvout, delimiter=',')
     for i in range(1,len(trainset)):
         curr_sent = trainset[str(i)][1]
-        for word in word_tokenize(curr_sent):
-            my_writer.writerow(model[word])
+        for w in [word for word in curr_sent.split() if word not in stopwords.words("english")]:
+            my_writer.writerow(model[w])
 
 sentVect_time = time.time() - start_time
 
