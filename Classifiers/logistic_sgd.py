@@ -52,7 +52,7 @@ class LogisticRegression(object):
         """ Initialize the parameters of the model
         :type input: theano.tensor.TensorType
         :param input: symbolic var describing the input i.e. one minibatch (theano.tensor.TensorType)
-        :param n_in: number of input units, number of features (int)
+;        :param n_in: number of input units, number of features (int)
         :param n_out: number of output units i.e. labels (int)
         """
         # start-snippet-1
@@ -156,7 +156,7 @@ def load_data(dataset):
         new_path = os.path.join(
             os.path.split(__file__)[0],
             "..",
-            "data",
+            "Data",
             dataset
         )
         if os.path.isfile(new_path) or data_file == 'mnist.pkl.gz':
