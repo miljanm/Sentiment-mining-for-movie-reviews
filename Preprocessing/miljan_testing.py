@@ -1,11 +1,26 @@
 __author__ = 'miljan'
 
 from gensim.models.word2vec import Word2Vec
-# from nltk.corpus import chat80
+from nltk.corpus import movie_reviews as mr
+from collections import defaultdict
+from nltk.tokenize import word_tokenize
+from pprint import pprint
+from os import chdir
 
 model = Word2Vec.load_word2vec_format('../Data/GoogleNews-vectors-negative300.bin', binary=True)  # C binary format
 
-print model.most_similar(positive=['woman', 'king'], negative=['man'])
-print model.doesnt_match("breakfast cereal dinner lunch".split())
-print model.similarity('woman', 'man')
-print model['computer']  # raw numpy vector of a word
+# documents = defaultdict(list)
+# for i in mr.fileids():
+#     documents[i.split('/')[0]].append(i)
+# pprint(documents['pos'][:10]) # first ten pos reviews.
+# pprint(documents['neg'][:10]) # first ten neg reviews.
+
+datapath = '/Users/miljan/nltk_data/corpora/movie_reviews/'
+sentences = []
+for id in mr.fileids():
+    with open(datapath + id) as file:
+        lines = file.readlines()
+        for line in lines:
+            sentences.append(word_tokenize(line))
+
+model.train(sentences)
