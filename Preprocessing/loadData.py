@@ -1,15 +1,24 @@
 
 # Imports
 import time
+import numpy
+import csv
+
 from csv import reader, writer
 from gensim.models.word2vec import Word2Vec
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+from vectorRepresentations import buildSentVecAsSum
+
 
 # Utility variables
 i=1
-limit=10
+limit=100000000
 trainset={}
+
+# Choose policy for building sentence representations
+sentenceVect = buildSentVecAsSum
+# sentenceVect = buildSentVecAsAverage
 
 # Paths
 model_name = '../Data/GoogleNews-vectors-negative300.bin'
@@ -53,15 +62,20 @@ print 'Vectorizing sentences'
 
 start_time = time.time()
 cachedStopWords = stopwords.words("english")
+data_matrix = numpy.zeros((len(trainset), 301))
 
-text = [word for word in text.split() if word not in stopwords.words("english")]
+for i in xrange(0,len(trainset)):
 
-with open('../transformedData.csv', 'wb') as csvout:
-    my_writer = writer(csvout, delimiter=',')
-    for i in range(1,len(trainset)):
-        curr_sent = trainset[str(i)][1]
-        for w in [word for word in curr_sent.split() if word not in stopwords.words("english")]:
-            my_writer.writerow(model[w])
+    curr_sent = word_tokenize(trainset[str(i+1)][1])
+    clean_sent = [word for word in curr_sent if word not in cachedStopWords]
+    data_matrix[i,0] = int(trainset[str(i+1)][2])-2
+    data_matrix[i,1:] = sentenceVect(clean_sent, model)
+
+with open('../Data/transformedData.csv', 'wb') as csvfile:
+
+    writer = csv.writer(csvfile, delimiter=',')
+    for row in data_matrix.tolist():
+        writer.writerow(row)
 
 sentVect_time = time.time() - start_time
 
