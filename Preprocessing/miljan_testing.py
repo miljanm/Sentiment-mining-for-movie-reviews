@@ -39,7 +39,7 @@ validation_size = 0.2
 
 rawdata = np.loadtxt(open("../Data/test2.csv", "rb"), delimiter=",")
 # shuffle rows for randomness
-# np.random.shuffle(rawdata)
+np.random.shuffle(rawdata)
 
 cutoff = int(round(len(rawdata) * (1 - validation_size)))
 
