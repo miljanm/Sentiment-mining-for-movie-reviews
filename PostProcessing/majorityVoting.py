@@ -13,7 +13,7 @@ import numpy
 ##################
 my_path = '../Data/Ensemble/'
 singleVote = False
-neighborWeight = 0.2
+neighborWeight = 0.5 #0.2
 first_id = 156061
 
 ##############################
