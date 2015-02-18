@@ -61,7 +61,7 @@ print 'Pickling ...'
 start_time = time.time()
 
 data_all = (data_train, data_validate, data_test)
-pickle.dump(data_all, open("../Data/mnist.pkl", "wb"))
+pickle.dump(data_all, open("../Data/movieRev.pkl", "wb"))
 
 pickle_time = time.time() - start_time
 
