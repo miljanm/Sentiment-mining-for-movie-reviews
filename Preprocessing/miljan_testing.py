@@ -1,60 +1,81 @@
-__author__ = 'miljan'
 
-# from gensim.models.word2vec import Word2Vec
-# from nltk.corpus import movie_reviews as mr
-# from collections import defaultdict
-# from nltk.tokenize import word_tokenize
-# from pprint import pprint
-# from os import chdir
-#
-# model = Word2Vec.load_word2vec_format('../Data/GoogleNews-vectors-negative300.bin', binary=True)  # C binary format
-# print model['computer']
-#
-# documents = defaultdict(list)
-# for i in mr.fileids():
-#     documents[i.split('/')[0]].append(i)
-# pprint(documents['pos'][:10]) # first ten pos reviews.
-# pprint(documents['neg'][:10]) # first ten neg reviews.
-#
-# datapath = '/Users/miljan/nltk_data/corpora/movie_reviews/'
-# sentences = []
-# for id in mr.fileids():
-#     with open(datapath + id) as file:
-#         lines = file.readlines()
-#         for line in lines:
-#             sentences.append(word_tokenize(line))
-#
-# model.train(sentences)
-
-
-
+###########
+# Imports #
+###########
+import time
 import numpy as np
-import pickle
-### Set parameters ###
+import pickle, gzip
 
+##################
+# Initialization #
+##################
 np.random.seed(42)
-validation_size = 0.2
+validation_size = 0.000667
 
-### Construct train, validation and test dataset ###
+################
+# Loading Data #
+################
+print '\n------------------'
+print 'Reading train and test vectors'
 
-rawdata = np.loadtxt(open("../Data/test2.csv", "rb"), delimiter=",")
-# shuffle rows for randomness
-np.random.shuffle(rawdata)
+start_time = time.time()
 
-cutoff = int(round(len(rawdata) * (1 - validation_size)))
+rawTrainData = np.loadtxt(open("../Data/transformedData.csv", "rb"), delimiter=",")
+rawTestData = np.loadtxt(open("../Data/transformedTestData.csv", "rb"), delimiter=",")
+np.random.shuffle(rawTrainData)
 
-labels_train = rawdata[:cutoff, 0]
-labels_validate = rawdata[cutoff:-1, 0]
-labels_test = rawdata[-1, 0]
+loadData_time = time.time() - start_time
 
-words = np.delete(rawdata, 0, 1)
-words_train = words[:cutoff, :]
-words_validate = words[cutoff:-1, :]
-words_test = words[-1, :]
+#############################
+# Build TRAIN-VAL-TEST Sets #
+#############################
+print '\n------------------'
+print 'Creating data structures ...'
+
+start_time = time.time()
+
+cutoff1 = int(round(len(rawTrainData) * (1 - validation_size)))
+
+labels_train = rawTrainData[:cutoff1, 0].astype(int)
+labels_validate = rawTrainData[cutoff1:, 0].astype(int)
+labels_test = rawTestData[:, 0].astype(int)
+
+rawTrainData[:, 0] = np.transpose(np.ones((rawTrainData.shape[0])))
+rawTestData[:, 0] = np.transpose(np.ones((rawTestData.shape[0])))
+words_train = rawTrainData[:cutoff1, :]
+words_validate = rawTrainData[cutoff1:, :]
+words_test = rawTestData[:, :]
 
 data_train = (words_train, labels_train)
 data_validate = (words_validate, labels_validate)
 data_test = (words_test, labels_test)
 
+create_Structures_time = time.time() - start_time
+
+#####################
+# PICKLE for THEANO #
+#####################
+print '\n------------------'
+print 'Pickling ...'
+
+start_time = time.time()
+
 data_all = (data_train, data_validate, data_test)
-pickle.dump(data_all, open("theano.p", "wb"))
+pickle.dump(data_all, open("../Data/mnist.pkl", "wb"))
+
+pickle_time = time.time() - start_time
+
+#############
+# Profiling #
+#############
+print '\n------------------'
+print "Profiling...\n"
+print "Loading: %f seconds" % loadData_time
+print "Creating data structures: %f seconds" % create_Structures_time
+print "Pickling: %f seconds" % pickle_time
+
+##########
+# Ending #
+##########
+print '\n------------------'
+print 'Done!'
