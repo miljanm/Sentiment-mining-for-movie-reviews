@@ -18,7 +18,7 @@ import theano
 import theano.tensor as T
 
 from logistic_sgd import LogisticRegression, load_data
-
+from csv import reader, writer
 
 # start-snippet-1
 class HiddenLayer(object):
@@ -178,8 +178,16 @@ class MLP(object):
         # end-snippet-3
 
 
-def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500):
+###########################################################################
+###########################################################################
+# DEFAULT
+#
+# learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
+#             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500
+###########################################################################
+###########################################################################
+def test_mlp(learning_rate=0.02, L1_reg=0.00, L2_reg=0.0001, n_epochs=350,
+             dataset='mnist.pkl.gz', batch_size=20, n_hidden=150):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -218,9 +226,9 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=28 * 28,
+        n_in=301,
         n_hidden=n_hidden,
-        n_out=10
+        n_out=5
     )
 
     # start-snippet-4
@@ -283,6 +291,9 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
             y: train_set_y[index * batch_size: (index + 1) * batch_size]
         }
     )
+
+    test_pred = theano.function([], [classifier.logRegressionLayer.y_pred], givens={x: test_set_x})
+
     # end-snippet-5
 
     ###############
@@ -291,8 +302,8 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     print '... training'
 
     # early-stopping parameters
-    patience = 10000  # look as this many examples regardless
-    patience_increase = 2  # wait this much longer when a new best is
+    patience = 1000000 #10000  # look as this many examples regardless
+    patience_increase = 10 #2 # wait this much longer when a new best is
                            # found
     improvement_threshold = 0.995  # a relative improvement of this much is
                                    # considered significant
@@ -342,7 +353,6 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                         improvement_threshold
                     ):
                         patience = max(patience, iter * patience_increase)
-
                     best_validation_loss = this_validation_loss
                     best_iter = iter
 
@@ -367,6 +377,17 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     print >> sys.stderr, ('The code for file ' +
                           os.path.split(__file__)[1] +
                           ' ran for %.2fm' % ((end_time - start_time) / 60.))
+
+    test_predict = test_pred()
+    with open('../Data/prediction.txt', 'wb') as f_out, open('../Data/test.tsv') as ids:
+        id_reader = reader(ids, dialect="excel-tab")
+        csv_writer = writer(f_out, delimiter=',')
+        csv_writer.writerow(['PhraseId', 'Sentiment'])
+        id_reader.next() # skip over title
+        for pred in test_predict[0]:
+            id = id_reader.next()
+            csv_writer.writerow([id[0], pred])
+    print('\nResults written to prediction.txt')
 
 
 if __name__ == '__main__':

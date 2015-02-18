@@ -165,7 +165,7 @@ def load_data(dataset):
     if (not os.path.isfile(dataset)) and data_file == 'mnist.pkl.gz':
         import urllib
         origin = (
-            'http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist.pkl.gz'
+            'http://www.iro.umontreal.ca/~lisa/deep/data/mnist/mnist666.pkl.gz'
         )
         print 'Downloading data from %s' % origin
         urllib.urlretrieve(origin, dataset)
@@ -262,7 +262,7 @@ def sgd_optimization_mnist(learning_rate=0.13, n_epochs=1000,
 
     # construct the logistic regression class
     # Each MNIST image has size 28*28
-    classifier = LogisticRegression(input=x, n_in=28 * 28, n_out=10)
+    classifier = LogisticRegression(input=x, n_in=301, n_out=5)
 
     # the cost we minimize during training is the negative log likelihood of
     # the model in symbolic format
