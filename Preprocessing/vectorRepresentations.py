@@ -2,8 +2,8 @@
 import numpy
 
 
-# derive simple bagOfWords representation of a review
-def buildBagOfWords():
+# derive basic bagOfWords representation of a review
+def buildBagOfWords(clean_sent, model, vocab):
 
     #vectorizer = CountVectorizer(analyzer="word",tokenizer=None,preprocessor=None,stop_words=None,max_features=5000)
     # fit_transform() does two functions: First, it fits the model
@@ -11,6 +11,12 @@ def buildBagOfWords():
     # into feature vectors. The input to fit_transform should be a list of
     # strings.
     #train_data_features = vectorizer.fit_transform(clean_reviews)
+    print 'not yet implemented'
+
+
+# derive ngram bagOfWords representation of a review
+def buildBagOfNgrams(clean_sent, model, ngram_vocab):
+
     print 'not yet implemented'
 
 
