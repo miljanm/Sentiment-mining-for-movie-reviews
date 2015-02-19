@@ -1,24 +1,20 @@
 
 import numpy
+from nltk.util import ngrams
 
+#
+def kmeansSentimentWords(clean_sent, centroids):
 
-# derive basic bagOfWords representation of a review
-def buildBagOfWords(clean_sent, model, vocab):
-
-    #vectorizer = CountVectorizer(analyzer="word",tokenizer=None,preprocessor=None,stop_words=None,max_features=5000)
-    # fit_transform() does two functions: First, it fits the model
-    # and learns the vocabulary; second, it transforms our training data
-    # into feature vectors. The input to fit_transform should be a list of
-    # strings.
-    #train_data_features = vectorizer.fit_transform(clean_reviews)
-    print 'not yet implemented'
+    pass
 
 
 # derive ngram bagOfWords representation of a review
-def buildBagOfNgrams(clean_sent, model, ngram_vocab):
-
-    print 'not yet implemented'
-
+# ! NOTE: ngram_vocab should be ngram_vocab = defaultdict(int)
+def buildBagOfNgrams(clean_sent, ngram_vocab, n):
+    l_ngrams = ngrams(clean_sent, n)
+    for ngram in l_ngrams:
+        ngram_vocab[ngram] += 1
+    return ngram_vocab
 
 # derive sentence representation have sum of word vectors
 def buildSentVecAsSum(clean_sent, model):
