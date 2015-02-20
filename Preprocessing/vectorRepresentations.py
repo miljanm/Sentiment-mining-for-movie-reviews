@@ -3,8 +3,7 @@ import numpy
 from nltk.util import ngrams
 
 #
-def kmeansSentimentWords(clean_sent, centroids):
-
+def kmeansSentiment(clean_sent, centroids):
     pass
 
 
