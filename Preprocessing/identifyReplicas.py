@@ -4,7 +4,8 @@
 ###########
 import time
 from csv import reader
-import pickle
+import cPickle as pickle
+
 
 ##############
 # Initialize #
@@ -25,7 +26,7 @@ start_time = time.time()
 
 with open(train_path) as tsv:
 
-    # intitialize reader and skip header
+    # initialize reader and skip header
     r = reader(tsv, dialect="excel-tab")
     r.next()
 
@@ -38,7 +39,7 @@ start_time = time.time()
 
 with open(test_path) as tsv:
 
-    # intitialize reader and skip header
+    # initialize reader and skip header
     r = reader(tsv, dialect="excel-tab")
     r.next()
 
@@ -46,7 +47,7 @@ with open(test_path) as tsv:
     for line in r:
 
         if "".join(line[2].lower().split()) in trainset:
-            replicas["".join(line[2].lower().split())] = trainset["".join(line[2].lower().split())]
+            replicas[line[0]] = trainset["".join(line[2].lower().split())]
 
 loading_time_test = time.time() - start_time
 
