@@ -6,15 +6,28 @@ import csv
 from os import walk
 import time
 import numpy
+import cPickle
+import sys
 
 
 ##################
 # Initialization #
 ##################
 my_path = '../Data/Ensemble/'
+pickle_path = '../Data/replicas.pkl'
+checkReplicas = True
 singleVote = False
 neighborWeight = 0.5 #0.2
 first_id = 156061
+
+if checkReplicas:
+    try:
+        f = open(pickle_path, 'r')
+        replicas = cPickle.load(f)
+    except:
+        print 'pickled replicas not found'
+        sys.exit()
+
 
 ##############################
 # Collect Models to Ensemble #
@@ -36,6 +49,7 @@ test_samples = sum(1 for line in open(fileList[0]))
 
 collect_time = time.time() - start_time
 
+
 #################
 # Extract Votes #
 #################
@@ -51,20 +65,26 @@ for read in reads:
     read.next()
 
     for row in read:
+        sample_idx = row[0]
         pred = int(row[1])
-        votes[line_idx, pred, reader_idx] = 1
 
-        if ~singleVote:
-            if pred+1<=4:
-                votes[line_idx, pred+1, reader_idx] = neighborWeight
-            if pred-1>=0:
-                votes[line_idx, pred-1, reader_idx] = neighborWeight
+        if sample_idx in replicas:
+            votes[line_idx, replicas[sample_idx], reader_idx] = 1
+
+        else:
+            votes[line_idx, pred, reader_idx] = 1
+            if ~singleVote:
+                if pred+1<=4:
+                    votes[line_idx, pred+1, reader_idx] = neighborWeight
+                if pred-1>=0:
+                    votes[line_idx, pred-1, reader_idx] = neighborWeight
 
         line_idx = line_idx + 1
 
     reader_idx = reader_idx + 1
 
 extract_time = time.time() - start_time
+
 
 #################
 # Combine Votes #
@@ -88,6 +108,7 @@ with open('../Data/ensemblePredictions.csv', 'wb') as csvout:
 
 combine_time = time.time() - start_time
 
+
 #############
 # Profiling #
 #############
@@ -96,6 +117,7 @@ print "Profiling...\n"
 print "Collecting models: %f seconds" % collect_time
 print "Extracting votes: %f seconds" % extract_time
 print "Combining votes: %f seconds" % combine_time
+
 
 ##########
 # Ending #
