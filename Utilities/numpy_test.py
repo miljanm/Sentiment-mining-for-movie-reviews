@@ -28,9 +28,26 @@ print numpy.sum(test, axis=0)
 
 """
 
-
+"""
 a = numpy.array([[1,2,1],[4,2,6],[8,1,4],[3,4,1]])
 
 print a
 print numpy.argmax(a, axis=0)
 print numpy.argmax(a, axis=1)
+"""
+
+
+###########
+# Imports #
+###########
+from nltk.corpus import stopwords
+from nltk import word_tokenize
+
+cachedRemovalList = stopwords.words("english")
+cachedRemovalList = cachedRemovalList+["'",",","."]
+
+sent = "how are movie car you doin '"
+
+print [word for word in word_tokenize(sent.lower()) if word not in cachedRemovalList]
+
+
