@@ -13,7 +13,7 @@ import sys
 ##################
 # Initialization #
 ##################
-my_path = '../Data/Ensemble/'
+my_path = '../Data/Samr_Theano/'
 pickle_path = '../Data/replicas.pkl'
 checkReplicas = True
 singleVote = False
