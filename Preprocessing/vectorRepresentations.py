@@ -21,12 +21,18 @@ def kmeansSentiment(clean_sent, kMeansModel, pcaModel, word2vecModel):
 
 
 # derive ngram bagOfWords representation of a review
-# ! NOTE: ngram_vocab should be ngram_vocab = defaultdict(int)
-def buildBagOfNgrams(clean_sent, ngram_vocab, n):
-    l_ngrams = ngrams(clean_sent, n)
-    for ngram in l_ngrams:
-        ngram_vocab[ngram] += 1
-    return ngram_vocab
+def buildBagOfNgrams(clean_sent, ngram_list):
+    n = len(ngram_list[0])
+    ngrams_dict = dict.fromkeys(ngram_list, 0)
+    for ngram in ngrams(clean_sent.split(), n):
+        try:
+            ngrams_dict[ngram] = 1
+        except:
+            pass
+    ngram_dict_sorted = sorted(ngrams_dict.items(), key=lambda x: x[0])
+    return [c[1] for c in ngram_dict_sorted]
+
+
 
 # derive sentence representation have sum of word vectors
 def buildSentVecAsSum(clean_sent, model):
