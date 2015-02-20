@@ -52,9 +52,9 @@ with open(test_path) as tsv:
 loading_time_test = time.time() - start_time
 
 
-#####################
-# PICKLE for THEANO #
-#####################
+############
+# Pickling #
+############
 print '\n------------------'
 print 'Pickling ...'
 
