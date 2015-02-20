@@ -48,6 +48,7 @@ vectors = scale(array(vectors))
 # apply PCA to 300 dimensional data
 pca = PCA(n_components='mle')
 vectors = pca.fit_transform(vectors)
+# dump(pca, open("../Data/pcaMLE.pkl", "wb"))
 
 print('\tNumber of PCA dimensions chosen: %d' % pca.n_components_)
 print 'Applying kMeans ...'
