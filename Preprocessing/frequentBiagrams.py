@@ -16,7 +16,7 @@ from nltk.corpus import stopwords
 # Initialize #
 ##############
 n = 2
-max_num = 80
+max_num = 270
 ngram_dict = defaultdict(int)
 freq_nGrams = []
 train_path = '../Data/train.tsv'
@@ -59,7 +59,7 @@ start_time = time.time()
 
 sorted_nGrams = sorted(ngram_dict.items(), key=operator.itemgetter(1), reverse=True)
 
-freq_nGrams = map(lambda x: x[0], sorted_nGrams[0:80])
+freq_nGrams = map(lambda x: x[0], sorted_nGrams[0:max_num])
 print freq_nGrams
 
 chopping_time = time.time() - start_time
