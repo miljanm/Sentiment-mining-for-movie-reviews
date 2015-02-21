@@ -32,10 +32,10 @@ model_name = '../Data/GoogleNews-vectors-negative300.bin'
 train_path = '../Data/train.tsv'
 test_path = '../Data/test.tsv'
 first_id = 156061
-feat_word2vec = 301
+feat_word2vec = 300
 feat_kMeans = 5
 feat_nGrams = 270
-feat_total = feat_word2vec + feat_kMeans + feat_nGrams
+feat_total = feat_word2vec + feat_kMeans + feat_nGrams + 1
 
 
 ########################################
@@ -105,11 +105,11 @@ with open(test_path) as tsv:
 reviewLoading_time_test = time.time() - start_time
 
 
-#######################
-# Vectorize sentences #
-#######################
+#############################
+# Vectorize train sentences #
+#############################
 print '\n------------------'
-print 'Vectorizing sentences'
+print 'Vectorizing train sentences'
 
 start_time = time.time()
 cachedStopWords = stopwords.words("english")
@@ -136,6 +136,14 @@ with open('../Data/transformedData.csv', 'wb') as csvfile:
         writer.writerow(row)
 
 sentVect_time_train = time.time() - start_time
+
+
+############################
+# Vectorize test sentences #
+############################
+print '\n------------------'
+print 'Vectorizing test sentences'
+
 start_time = time.time()
 
 data_matrix = numpy.zeros((len(testset), feat_total))
@@ -148,11 +156,11 @@ for i in xrange(first_id,first_id+len(testset)):
     # class
     data_matrix[i-first_id, 0] = 2
     # word2vec representation
-    data_matrix[i, 1:feat_word2vec+1] = sentenceVect(clean_sent, model)
+    data_matrix[i-first_id, 1:feat_word2vec+1] = sentenceVect(clean_sent, model)
     # clustering representation
     data_matrix[i, feat_word2vec+1:feat_word2vec+feat_kMeans+1] = kmeansSentiment(sent, kMeansModel, pcaModel, model)
     # nGram representation
-    data_matrix[i, feat_word2vec+feat_kMeans+1:feat_word2vec+feat_kMeans+feat_nGrams+1] = buildBagOfNgrams(sent,freq_mGrams_list)
+    data_matrix[i-first_id, feat_word2vec+feat_kMeans+1:feat_word2vec+feat_kMeans+feat_nGrams+1] = buildBagOfNgrams(sent,freq_mGrams_list)
 
 with open('../Data/transformedTestData.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
