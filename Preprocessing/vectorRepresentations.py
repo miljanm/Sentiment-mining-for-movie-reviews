@@ -1,6 +1,7 @@
 
 import numpy
 from nltk.util import ngrams
+from sklearn.preprocessing import scale
 
 def kmeansSentiment(clean_sent, kMeansModel, pcaModel, word2vecModel):
     # initialize feature vector as dict
@@ -11,7 +12,7 @@ def kmeansSentiment(clean_sent, kMeansModel, pcaModel, word2vecModel):
     for word in clean_sent.split():
         try:
             # read the word2vec vector and apply pca to it
-            vector = pcaModel.transform(word2vecModel[word])
+            vector = pcaModel.transform(scale(word2vecModel[word]))
         except:
             continue
         prediction = kMeansModel.predict(vector)
@@ -24,11 +25,9 @@ def kmeansSentiment(clean_sent, kMeansModel, pcaModel, word2vecModel):
 def buildBagOfNgrams(clean_sent, ngram_list):
     n = len(ngram_list[0])
     ngrams_dict = dict.fromkeys(ngram_list, 0)
-    for ngram in ngrams(clean_sent.split(), n):
-        try:
+    for ngram in ngrams(clean_sent, n):
+        if ngram in ngrams_dict:
             ngrams_dict[ngram] = 1
-        except:
-            pass
     ngram_dict_sorted = sorted(ngrams_dict.items(), key=lambda x: x[0])
     return [c[1] for c in ngram_dict_sorted]
 

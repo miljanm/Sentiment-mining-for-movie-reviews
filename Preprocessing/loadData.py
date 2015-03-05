@@ -12,6 +12,7 @@ from gensim.models.word2vec import Word2Vec
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 from vectorRepresentations import kmeansSentiment, buildSentVecAsSum, buildBagOfNgrams, buildSentVecAsAverage
+from sentenceCleaning import cleanItUp
 from pickle import load
 
 
@@ -35,7 +36,7 @@ first_id = 156061
 feat_word2vec = 300
 feat_kMeans = 5
 feat_nGrams = 270
-feat_total = feat_word2vec + feat_kMeans + feat_nGrams + 1
+feat_total = feat_word2vec + feat_nGrams + 1
 
 
 ########################################
@@ -52,11 +53,11 @@ model_time = time.time() - start_time
 ###############################
 # Load kMeans and PCA models #
 ###############################
-print '\n------------------'
-print 'Loading PCA and kMeans models...'
+#print '\n------------------'
+#print 'Loading PCA and kMeans models...'
 
-kMeansModel = load(open("../Data/kMeans5.pkl", "rb" ))
-pcaModel = load(open("../Data/pcaMLE.pkl", "rb" ))
+#kMeansModel = load(open("../Data/kMeans5.pkl", "rb" ))
+#pcaModel = load(open("../Data/pcaMLE.pkl", "rb" ))
 
 
 ########################
@@ -113,8 +114,10 @@ print 'Vectorizing train sentences'
 
 start_time = time.time()
 cachedStopWords = stopwords.words("english")
+removalList = stopwords.words("english")
+removalList = removalList + ["'",",",".","ca'","n't","'s","-lrb-","-rrb-","''", '``']
 
-data_matrix = numpy.zeros((len(trainset), feat_total))
+data_matrix = numpy.zeros((len(trainset), feat_total+1))
 for i in xrange(0, len(trainset)):
 
     # sentence
@@ -123,12 +126,14 @@ for i in xrange(0, len(trainset)):
     clean_sent = [word for word in curr_sent if word not in cachedStopWords]
     # class
     data_matrix[i, 0] = int(trainset[str(i+1)][2])
+    # length
+    data_matrix[i, 1] = len(curr_sent)
     # word2vec representation
-    data_matrix[i, 1:feat_word2vec+1] = sentenceVect(clean_sent, model)
+    data_matrix[i, 2:feat_word2vec+2] = sentenceVect(clean_sent, model)
     # clustering representation
-    data_matrix[i, feat_word2vec+1:feat_word2vec+feat_kMeans+1] = kmeansSentiment(sent, kMeansModel, pcaModel, model)
+    # data_matrix[i, feat_word2vec+1:feat_word2vec+feat_kMeans+1] = kmeansSentiment(sent, kMeansModel, pcaModel, model)
     # nGram representation
-    data_matrix[i, feat_word2vec+feat_kMeans+1:feat_word2vec+feat_kMeans+feat_nGrams+1] = buildBagOfNgrams(sent,freq_mGrams_list)
+    data_matrix[i, feat_word2vec+2:feat_word2vec+feat_nGrams+2] = buildBagOfNgrams(cleanItUp(sent, removalList, False, False),freq_mGrams_list)
 
 with open('../Data/transformedData.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
@@ -146,7 +151,7 @@ print 'Vectorizing test sentences'
 
 start_time = time.time()
 
-data_matrix = numpy.zeros((len(testset), feat_total))
+data_matrix = numpy.zeros((len(testset), feat_total+1))
 for i in xrange(first_id,first_id+len(testset)):
 
     # sentence
@@ -155,12 +160,14 @@ for i in xrange(first_id,first_id+len(testset)):
     clean_sent = [word for word in curr_sent if word not in cachedStopWords]
     # class
     data_matrix[i-first_id, 0] = 2
+    # length
+    data_matrix[i-first_id, 1] = len(curr_sent)
     # word2vec representation
     data_matrix[i-first_id, 1:feat_word2vec+1] = sentenceVect(clean_sent, model)
     # clustering representation
-    data_matrix[i, feat_word2vec+1:feat_word2vec+feat_kMeans+1] = kmeansSentiment(sent, kMeansModel, pcaModel, model)
+    #data_matrix[i, feat_word2vec+1:feat_word2vec+feat_kMeans+1] = kmeansSentiment(sent, kMeansModel, pcaModel, model)
     # nGram representation
-    data_matrix[i-first_id, feat_word2vec+feat_kMeans+1:feat_word2vec+feat_kMeans+feat_nGrams+1] = buildBagOfNgrams(sent,freq_mGrams_list)
+    data_matrix[i-first_id, feat_word2vec+1:feat_word2vec+feat_nGrams+1] = buildBagOfNgrams(cleanItUp(sent, removalList, False, False),freq_mGrams_list)
 
 with open('../Data/transformedTestData.csv', 'wb') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')

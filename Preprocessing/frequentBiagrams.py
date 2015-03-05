@@ -15,7 +15,7 @@ from nltk.corpus import stopwords
 ##############
 # Initialize #
 ##############
-n = 2
+n = 1
 max_num = 270
 ngram_dict = defaultdict(int)
 freq_nGrams = []

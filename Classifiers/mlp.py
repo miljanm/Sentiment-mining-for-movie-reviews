@@ -186,8 +186,8 @@ class MLP(object):
 #             dataset='mnist.pkl.gz', batch_size=20, n_hidden=500
 ###########################################################################
 ###########################################################################
-def test_mlp(learning_rate=0.02, L1_reg=0.00, L2_reg=0.0001, n_epochs=350,
-             dataset='mnist.pkl.gz', batch_size=20, n_hidden=150):
+def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=550,
+             dataset='movieRev.pkl.gz', batch_size=20, n_hidden=500):
     """
     Demonstrate stochastic gradient descent optimization for a multilayer
     perceptron
@@ -226,7 +226,7 @@ def test_mlp(learning_rate=0.02, L1_reg=0.00, L2_reg=0.0001, n_epochs=350,
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=301,
+        n_in=572,
         n_hidden=n_hidden,
         n_out=5
     )
@@ -302,7 +302,7 @@ def test_mlp(learning_rate=0.02, L1_reg=0.00, L2_reg=0.0001, n_epochs=350,
     print '... training'
 
     # early-stopping parameters
-    patience = 1000000 #10000  # look as this many examples regardless
+    patience = 900000000 #10000  # look as this many examples regardless
     patience_increase = 10 #2 # wait this much longer when a new best is
                            # found
     improvement_threshold = 0.995  # a relative improvement of this much is

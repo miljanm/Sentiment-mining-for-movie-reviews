@@ -170,6 +170,7 @@ def load_data(dataset):
         print 'Downloading data from %s' % origin
         urllib.urlretrieve(origin, dataset)
 
+    print '\n------------------'
     print '... loading data'
 
     # Load the dataset

@@ -44,7 +44,7 @@ for word in set(dataset):
 print 'Applying PCA ...'
 
 # put the data into ndarray and center it
-vectors = scale(array(vectors))
+vectors = array(vectors)
 # apply PCA to 300 dimensional data
 pca = PCA(n_components='mle')
 vectors = pca.fit_transform(vectors)
